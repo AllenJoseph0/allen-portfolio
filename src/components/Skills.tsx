@@ -1,35 +1,98 @@
 import { motion } from 'framer-motion'
 
-const skills = [
+const technicalSkills = [
   {
-    category: 'Programming & Development',
+    category: 'Programming Languages',
+    items: ['Python', 'JavaScript', 'TypeScript', 'C'],
+  },
+  {
+    category: 'Frameworks & Libraries',
     items: [
-      { name: 'Python', level: 90 },
-      { name: 'C', level: 85 },
-      { name: 'Flutter', level: 80 },
-      { name: 'HTML/CSS', level: 85 },
+      'Flask',
+      'FastAPI',
+      'LangChain',
+      'LangGraph',
+      'Node.js',
+      'Express.js',
+      'React (CRA, Vite)',
+      'Flutter',
     ],
   },
   {
-    category: 'Data & Analysis',
+    category: 'AI & Machine Learning',
     items: [
-      { name: 'Pandas/NumPy', level: 85 },
-      { name: 'Tableau', level: 80 },
-      { name: 'Power BI', level: 75 },
-      { name: 'Advanced Excel', level: 85 },
+      'Retrieval-Augmented Generation (RAG)',
+      'Prompt Engineering',
+      'LangChain Agents',
+      'Model Context Protocol (MCP)',
+      'LLM Integration (OpenAI, Gemini, Groq)',
+      'Whisper ASR',
+      'HuggingFace Transformers',
+      'MediaPipe',
     ],
   },
   {
-    category: 'Tools & Platforms',
+    category: 'Speech & Multimodal Processing',
     items: [
-      { name: 'AWS (S3, EC2)', level: 70 },
-      { name: 'SQL', level: 80 },
-      { name: 'Firebase', level: 65 },
-      { name: 'Git/GitHub', level: 85 },
+      'Whisper (ASR)',
+      'Deepgram STT/TTS',
+      'Google TTS',
+      'ElevenLabs',
+      'Piper TTS',
+      'Gemini Vision',
+      'Tesseract OCR',
     ],
+  },
+  {
+    category: 'Data Analysis & Visualization',
+    items: ['Pandas', 'NumPy', 'Tableau', 'Power BI', 'Advanced Excel'],
+  },
+  {
+    category: 'Databases & Vector Stores',
+    items: [
+      'SQL',
+      'Firebase (Basic)',
+      'Qdrant',
+      'Pinecone (Familiar)',
+      'JSON-based Data Stores',
+    ],
+  },
+  {
+    category: 'Web Technologies',
+    items: [
+      'HTML',
+      'CSS',
+      'JavaScript (ES6+)',
+      'TypeScript',
+      'REST APIs',
+      'WebSockets',
+    ],
+  },
+  {
+    category: 'Cloud & Deployment',
+    items: ['AWS (S3, EC2 – Basic)', 'Docker (Basic)', 'GitHub Pages', 'Vercel'],
+  },
+  {
+    category: 'Web Scraping & Automation',
+    items: ['Selenium', 'BeautifulSoup', 'Requests'],
+  },
+  {
+    category: 'Developer Tools',
+    items: ['VS Code', 'GitHub', 'Android Studio'],
   },
 ]
 
+const softSkills = [
+  'Quick Learner',
+  'Adaptable',
+  'Communication',
+  'Time-Management',
+  'Problem-Solving',
+  'Presentation',
+  'Analytical',
+]
+
+// Assuming certifications from your previous file version
 const certifications = [
   {
     name: 'The Joy of Computing Python',
@@ -60,53 +123,69 @@ export const Skills = () => {
         </motion.h2>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {skills.map((category, categoryIndex) => (
+          {technicalSkills.map((category, categoryIndex) => (
             <motion.div
               key={category.category}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: categoryIndex * 0.2 }}
+              transition={{ duration: 0.8, delay: categoryIndex * 0.1 }}
               className="glass-card p-6"
             >
               <h3 className="text-xl font-orbitron mb-6 text-neon-blue">
                 {category.category}
               </h3>
-              <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
                 {category.items.map((skill, skillIndex) => (
-                  <motion.div
-                    key={skill.name}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                  <motion.span
+                    key={skill}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: skillIndex * 0.1 }}
+                    transition={{ duration: 0.3, delay: skillIndex * 0.05 }}
+                    className="px-3 py-1 text-sm bg-neon-blue/10 text-neon-blue rounded-full"
                   >
-                    <div className="flex justify-between mb-2">
-                      <span className="text-gray-300">{skill.name}</span>
-                      <span className="text-neon-blue">{skill.level}%</span>
-                    </div>
-                    <div className="h-2 bg-dark rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${skill.level}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, delay: skillIndex * 0.1 }}
-                        className="h-full bg-neon-blue rounded-full"
-                      />
-                    </div>
-                  </motion.div>
+                    {skill}
+                  </motion.span>
                 ))}
               </div>
             </motion.div>
           ))}
         </div>
 
+        {/* Soft Skills Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="my-16"
+        >
+          <h3 className="text-2xl font-orbitron text-center mb-8 text-neon-blue">
+            Soft Skills
+          </h3>
+          <div className="glass-card p-6 flex flex-wrap justify-center gap-3">
+            {softSkills.map((skill, index) => (
+              <motion.span
+                key={skill}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="px-4 py-2 text-md bg-dark/70 text-gray-200 rounded-full border border-neon-blue/20"
+              >
+                {skill}
+              </motion.span>
+            ))}
+          </div>
+        </motion.div>
+
         {/* Certifications Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-12"
         >
           <h3 className="text-2xl font-orbitron text-center mb-8 text-neon-blue">
@@ -131,4 +210,4 @@ export const Skills = () => {
       </div>
     </section>
   )
-} 
+}

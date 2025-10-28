@@ -79,7 +79,7 @@ export const About = () => {
               transition={{ delay: 0.6, duration: 0.8 }}
             >
               <a
-                href={`${import.meta.env.BASE_URL}assets/resume/resume.pdf`}
+                href={`${import.meta.env.BASE_URL}assets/resume/Allen Joseph_Resume.pdf`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 glass-card px-6 py-3 text-neon-blue hover:bg-neon-blue/10 transition-colors"
