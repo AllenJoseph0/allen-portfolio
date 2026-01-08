@@ -29,7 +29,7 @@ export const About = () => {
                 />
               </div>
             </motion.div>
-            
+
             {/* Decorative elements */}
             <div className="absolute -top-4 -left-4 w-24 h-24 border-2 border-neon-blue rounded-lg animate-float" />
             <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-neon-purple rounded-lg animate-float" style={{ animationDelay: '1s' }} />
@@ -54,9 +54,8 @@ export const About = () => {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="text-gray-300 mb-6"
             >
-              I'm a Computer Science graduate from Amal Jyothi College of Engineering (2020-2024) with a passion for AI, 
-              robotics, and software development. My journey in tech has been driven by a desire to create impactful 
-              solutions that make a difference in people's lives.
+              I’m a Software Engineer from Amal Jyothi College of Engineering (2020–2024) with professional experience in building scalable, efficient, and impactful software solutions.
+              My journey in tech is driven by a desire to solve real-world problems through clean code, innovative thinking, and continuous learning
             </motion.p>
 
             <motion.p
@@ -66,10 +65,10 @@ export const About = () => {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-gray-300 mb-8"
             >
-              From developing AI-powered vision assistance for the visually impaired to creating autonomous 
-              firefighting robots, I combine technical expertise with innovative thinking to solve real-world 
-              problems. I'm particularly interested in the intersection of AI, robotics, and human-computer 
-              interaction.
+              From engineering scalable RAG systems and real-time AI voice applications to developing vision assistance for
+              the visually impaired, I build advanced solutions that bridge the gap between complex AI technologies and
+              practical user needs. I excel in the intersection of Generative AI, robotics, and human-computer interaction,
+              constantly pushing the boundaries of what's possible.
             </motion.p>
 
             <motion.div
