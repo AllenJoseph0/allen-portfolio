@@ -92,7 +92,7 @@ const softSkills = [
   'Analytical',
 ]
 
-// Assuming certifications from your previous file version
+// Updated certifications list
 const certifications = [
   {
     name: 'The Joy of Computing Python',
@@ -103,8 +103,8 @@ const certifications = [
     issuer: 'AWS',
   },
   {
-    name: 'Generative AI Data Analyst',
-    issuer: 'AI Certification',
+    name: 'Generative AI for Data Scientists',
+    issuer: 'IBM',
   },
 ]
 
@@ -211,3 +211,4 @@ export const Skills = () => {
     </section>
   )
 }
+

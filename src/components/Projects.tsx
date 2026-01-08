@@ -3,49 +3,33 @@ import { Github } from 'lucide-react'
 
 const projects = [
   {
-    title: 'AI Voice Calling Application',
-    description: 'Developing a real-time conversational AI system with an end-to-end voice streaming pipeline using WebSockets, Silero VAD, Whisper, RAG, LLM, and TTS.',
-    image: `${import.meta.env.BASE_URL}assets/images/voice-ai.jpg`, // Placeholder image path
-    tags: ['Vite', 'TypeScript', 'Python', 'Whisper', 'RAG', 'WebSocket'],
-    github: 'https://github.com/AllenJoseph0', // Placeholder link
-    date: 'Oct 2025 – Present'
-  },
-  {
-    title: 'Agentic Web Applications',
-    description: 'Built agentic web platforms (Fitness Agent, WebGen, AgentGen) using LangChain and Model Context Protocol (MCP) for personalized recommendations and dynamic site generation.',
-    image: `${import.meta.env.BASE_URL}assets/images/agent-web.jpg`, // Placeholder image path
-    tags: ['JavaScript', 'TypeScript', 'LangChain', 'MCP', 'React'],
-    github: 'https://github.com/AllenJoseph0', // Placeholder link
-    date: 'Aug 2024 – Present'
-  },
-  {
     title: 'Retrieval-Augmented Generation (RAG) Systems',
     description: 'Built scalable RAG backends with Flask/Node.js, LangGraph, and Qdrant. Integrated multiple LLMs and multimodal engines (TTS, voice interaction).',
-    image: `${import.meta.env.BASE_URL}assets/images/rag-system.jpg`, // Placeholder image path
+    image: `${import.meta.env.BASE_URL}assets/images/rag-system.png`,
     tags: ['Flask', 'Node.js', 'LangChain', 'LangGraph', 'RAG', 'Qdrant'],
-    github: 'https://github.com/AllenJoseph0', // Placeholder link
-    date: 'Jun 2024 – Present'
+    github: 'https://github.com/AllenJoseph0/RAG-Qdrant', // Placeholder link
+    date: 'Jun 2025'
+  },
+  {
+    title: 'AI Voice Calling Application',
+    description: 'Developing a real-time conversational AI system with an end-to-end voice streaming pipeline using WebSockets, Silero VAD, Whisper, RAG, LLM, and TTS.',
+    image: `${import.meta.env.BASE_URL}assets/images/voice-ai.png`,
+    tags: ['Vite', 'TypeScript', 'Python', 'Whisper', 'RAG', 'WebSocket'],
+    github: 'https://github.com/AllenJoseph0/ai_voice_calling_app', // Placeholder link
+    date: 'Oct 2025'
   },
   {
     title: 'Bharatanatyam Gesture Recognition',
     description: 'Developed real-time mudra recognition with 90% accuracy using OpenCV and MediaPipe. Built Flask web app for live video streaming and gesture display.',
-    image: `/assets/images/bharatanatyam.jpg`,
+    image: `${import.meta.env.BASE_URL}assets/images/bharatanatyam-vision.png`,
     tags: ['Python', 'OpenCV', 'Flask', 'MediaPipe'],
     github: 'https://github.com/AllenJoseph0/MudraVision',
     date: 'Feb 2025'
   },
   {
-    title: 'AI-Driven Multi-Robot Fire Suppression',
-    description: 'Created autonomous firefighting robot with indoor navigation and 85% fire detection success rate. Integrated sensors for fire detection and suppression.',
-    image: `${import.meta.env.BASE_URL}assets/images/fire-robot.jpg`,
-    tags: ['Python', 'Hardware Integration', 'AI', 'Robotics'],
-  
-    date: 'May 2024'
-  },
-  {
     title: 'SeekAssist: AI Vision Assistance',
     description: 'Built mobile app to describe images using AI with 92% label accuracy. Delivered output via voice and text for visually impaired users.',
-    image: `/assets/images/seekassist.jpg`,
+    image: `${import.meta.env.BASE_URL}assets/images/seekassist-vision.png`,
     tags: ['Flutter', 'AI', 'Mobile Development'],
     github: 'https://github.com/AllenJoseph0/SeekAssist',
     date: 'Jun 2023'
