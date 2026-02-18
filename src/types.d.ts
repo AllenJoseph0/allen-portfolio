@@ -18,8 +18,3 @@ declare module '*.pdf' {
   export default content
 }
 
-interface ImportMeta {
-  readonly env: {
-    readonly BASE_URL: string
-  }
-} 
