@@ -277,7 +277,7 @@ async function startServer() {
 
     app.listen(PORT, () => {
         console.log(`🚀 Portfolio backend running on port ${PORT}`);
-        console.log(`📊 Visitor tracking active (MySQL)`);
+        console.log(`📊 Visitor tracking active (PostgreSQL)`);
         console.log(`🌍 Using ip-api.com for geolocation`);
     });
 }
