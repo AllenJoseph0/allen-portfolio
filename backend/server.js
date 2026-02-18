@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
     origin: '*',
-    allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning', 'x-admin-key'],
     methods: ['GET', 'POST', 'OPTIONS']
 }));
 app.use(express.json());
@@ -182,6 +182,17 @@ app.post('/api/visitors', async (req, res) => {
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
         `;
 
+        // Parse advanced tracking if available
+        let advancedData = {};
+        if (advancedTracking && typeof advancedTracking === 'object') {
+            advancedData = advancedTracking;
+        } else if (advancedTracking && typeof advancedTracking === 'string') {
+            try { advancedData = JSON.parse(advancedTracking); } catch (e) { }
+        }
+
+        const visitorId = advancedData.visitorId || 'new-visitor';
+        const deviceModel = advancedData.deviceModel || 'General Device';
+
         const values = [
             visitor.id, visitor.timestamp, visitor.ip, visitor.city, visitor.region, visitor.country, visitor.country_code,
             visitor.latitude, visitor.longitude, visitor.timezone, visitor.isp, visitor.page, visitor.pageTitle,
@@ -192,11 +203,12 @@ app.post('/api/visitors', async (req, res) => {
 
         await pool.query(query, values);
 
-        console.log(`📍 New visitor from ${visitor.city}, ${visitor.country} | ${visitor.deviceType} | ${visitor.browser}`);
+        console.log(`📍 [${deviceModel}] Visitor ${visitorId} from ${visitor.city || 'Unknown City'}, ${visitor.country || 'Unknown Country'} | ${visitor.os} ${visitor.browser}`);
 
         res.json({
             success: true,
             message: 'Visitor tracked successfully',
+            visitorId: visitorId,
             location: {
                 city: visitor.city,
                 country: visitor.country
@@ -225,8 +237,62 @@ async function getStatCounts(column) {
     }, {});
 }
 
-// Get visitor statistics
-app.get('/api/stats', async (req, res) => {
+// Middleware to protect admin routes
+const requireAdmin = (req, res, next) => {
+    const adminKey = req.headers['x-admin-key'];
+    const configuredPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    if (adminKey && adminKey === configuredPassword) {
+        next();
+    } else {
+        res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+};
+
+// Admin Login Check
+app.post('/api/admin/login', (req, res) => {
+    const { password } = req.body;
+    const configuredPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+    if (password === configuredPassword) {
+        res.json({ success: true, token: password }); // Simple token logic for now
+    } else {
+        res.status(401).json({ success: false, message: 'Invalid password' });
+    }
+});
+
+// Admin: Get detailed visitor logs
+app.get('/api/admin/visitors', requireAdmin, async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 50;
+        const offset = (page - 1) * limit;
+
+        const countResult = await pool.query('SELECT COUNT(*) as total FROM visitors');
+        const total = parseInt(countResult.rows[0].total);
+
+        const result = await pool.query(
+            'SELECT * FROM visitors ORDER BY timestamp DESC LIMIT $1 OFFSET $2',
+            [limit, offset]
+        );
+
+        res.json({
+            success: true,
+            visitors: result.rows,
+            pagination: {
+                total,
+                page,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching admin visitors:', error);
+        res.status(500).json({ success: false, message: 'Database error' });
+    }
+});
+
+// Get visitor statistics (Protected)
+app.get('/api/stats', requireAdmin, async (req, res) => {
     try {
         // Total visitors
         const totalResult = await pool.query('SELECT COUNT(*) as total FROM visitors');
