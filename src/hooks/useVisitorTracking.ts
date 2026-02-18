@@ -177,7 +177,7 @@ export const useVisitorTracking = (options: VisitorTrackingOptions = {}) => {
     const {
         enabled = true,
         // FORCE NGROK URL - Hardcoded to ensure it works on mobile
-        apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/visitors',
+        apiUrl = import.meta.env.VITE_API_URL || 'https://allen-portfolio-j6qz.onrender.com/api/visitors',
         educationalMode = false // Enable advanced tracking for demo
     } = options;
 
