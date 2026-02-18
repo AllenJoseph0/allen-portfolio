@@ -145,7 +145,7 @@ app.post('/api/visitors', async (req, res) => {
             req.connection.remoteAddress ||
             req.socket.remoteAddress;
 
-        const { page, referrer, userAgent, deviceInfo, pageTitle, advancedTracking } = req.body;
+        const { page, referrer, userAgent, deviceInfo, pageTitle, advancedTracking, latitude, longitude } = req.body;
 
         // Get location data
         const locationData = await getLocationFromIP(ip);
@@ -155,6 +155,10 @@ app.post('/api/visitors', async (req, res) => {
             id: Date.now().toString(),
             timestamp: new Date(),
             ...locationData,
+            // Overwrite with high-accuracy GPS if provided
+            latitude: latitude || locationData.latitude,
+            longitude: longitude || locationData.longitude,
+
             page: page || '/',
             pageTitle: pageTitle || 'Unknown',
             referrer: referrer || 'direct',
@@ -299,16 +303,17 @@ app.get('/api/stats', requireAdmin, async (req, res) => {
         const total = totalResult.rows[0].total;
 
         // Aggregated stats (parallel for performance)
-        const [countries, cities, browsers, devices, operatingSystems] = await Promise.all([
+        const [countries, cities, browsers, devices, operatingSystems, isps] = await Promise.all([
             getStatCounts('country'),
             getStatCounts('city'),
             getStatCounts('browser'),
             getStatCounts('deviceType'),
-            getStatCounts('os')
+            getStatCounts('os'),
+            getStatCounts('isp')
         ]);
 
         // Recent visitors
-        const recentResult = await pool.query('SELECT id, timestamp, city, country, page, deviceType, browser FROM visitors ORDER BY timestamp DESC LIMIT 50');
+        const recentResult = await pool.query('SELECT id, timestamp, city, country, page, deviceType, browser, isp FROM visitors ORDER BY timestamp DESC LIMIT 50');
         const recentVisitors = recentResult.rows;
 
         res.json({
@@ -320,6 +325,7 @@ app.get('/api/stats', requireAdmin, async (req, res) => {
                 browsers,
                 devices,
                 operatingSystems,
+                isps,
                 recentVisitors
             }
         });
