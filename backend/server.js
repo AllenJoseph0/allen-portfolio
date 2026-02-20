@@ -338,6 +338,41 @@ app.get('/api/stats', requireAdmin, async (req, res) => {
     }
 });
 
+// Get global high score
+app.get('/api/highscore', async (req, res) => {
+    try {
+        // Query to find the max high score inside the advancedTracking JSONB column
+        // We cast to integer to ensure correct numerical sorting
+        const result = await pool.query(`
+            SELECT 
+                (advancedTracking->>'highScore')::int as score, 
+                (advancedTracking->>'visitorId') as visitor_id
+            FROM visitors 
+            WHERE advancedTracking->>'highScore' IS NOT NULL 
+            ORDER BY score DESC 
+            LIMIT 1
+        `);
+
+        if (result.rows.length > 0) {
+            res.json({
+                success: true,
+                highScore: result.rows[0].score,
+                champion: result.rows[0].visitor_id
+            });
+        } else {
+            res.json({
+                success: true,
+                highScore: 0,
+                champion: null
+            });
+        }
+    } catch (error) {
+        console.error('Error fetching high score:', error);
+        // Fallback to 0 if table doesn't exist or other error
+        res.json({ success: false, highScore: 0 });
+    }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
