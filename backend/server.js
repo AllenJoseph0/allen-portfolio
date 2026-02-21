@@ -48,30 +48,23 @@ const testDbConnection = async () => {
 };
 
 
-// Get location from IP using ip-api.com (free tier: 45 requests/minute)
+// Get location from IP using ip-api.com (free tier: 45 req/min)
+// NOTE: IP-based city is often the ISP gateway city, not the user's real city.
+// Use reverseGeocode() instead when GPS coords are available.
 async function getLocationFromIP(ip) {
     try {
-        // For localhost/development, use a default location
         if (ip === '::1' || ip === '127.0.0.1' || ip.startsWith('192.168.') || ip.startsWith('10.')) {
             return {
-                ip: ip,
-                city: 'Local Development',
-                region: 'Local',
-                country: 'Local',
-                country_code: 'LC',
-                latitude: 0,
-                longitude: 0,
-                timezone: 'UTC',
-                isp: 'Local Network'
+                ip, city: 'Local Development', region: 'Local',
+                country: 'Local', country_code: 'LC',
+                latitude: 0, longitude: 0, timezone: 'UTC', isp: 'Local Network'
             };
         }
 
-        // Use ip-api.com (no key required, http endpoint for free tier)
-        const response = await axios.get(`http://ip-api.com/json/${ip}`, {
+        const response = await axios.get(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,regionName,city,lat,lon,timezone,isp,query`, {
             timeout: 5000
         });
 
-        // ip-api returns status: 'fail' on error
         if (response.data.status === 'fail') {
             throw new Error(response.data.message || 'IP Lookup Failed');
         }
@@ -79,7 +72,7 @@ async function getLocationFromIP(ip) {
         return {
             ip: response.data.query,
             city: response.data.city,
-            region: response.data.regionName, // ip-api uses 'regionName' for full state name
+            region: response.data.regionName,
             country: response.data.country,
             country_code: response.data.countryCode,
             latitude: response.data.lat,
@@ -88,18 +81,50 @@ async function getLocationFromIP(ip) {
             isp: response.data.isp
         };
     } catch (error) {
-        console.error('Error fetching location:', error.message);
+        console.error('IP location error:', error.message);
         return {
-            ip: ip,
-            city: 'Unknown',
-            region: 'Unknown',
-            country: 'Unknown',
-            country_code: 'XX',
-            latitude: 0,
-            longitude: 0,
-            timezone: 'UTC',
-            isp: 'Unknown'
+            ip, city: 'Unknown', region: 'Unknown', country: 'Unknown',
+            country_code: 'XX', latitude: 0, longitude: 0, timezone: 'UTC', isp: 'Unknown'
         };
+    }
+}
+
+// Reverse geocode GPS coordinates → precise city name
+// Uses OpenStreetMap Nominatim — free, no API key needed.
+// Returns partial location override: { city, region, country, country_code }
+async function reverseGeocode(lat, lon) {
+    try {
+        const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&zoom=10&addressdetails=1`;
+        const response = await axios.get(url, {
+            timeout: 5000,
+            headers: {
+                // Nominatim requires a User-Agent identifying your app
+                'User-Agent': 'AllenPortfolio/1.0 (portfolio-visitor-tracker)'
+            }
+        });
+
+        const addr = response.data?.address;
+        if (!addr) return null;
+
+        // Nominatim has many granularity levels — pick the most specific available
+        const city =
+            addr.city ||
+            addr.town ||
+            addr.village ||
+            addr.suburb ||
+            addr.county ||
+            addr.state_district ||
+            'Unknown';
+
+        return {
+            city,
+            region: addr.state || addr.region || 'Unknown',
+            country: addr.country || 'Unknown',
+            country_code: (addr.country_code || 'XX').toUpperCase(),
+        };
+    } catch (error) {
+        console.error('Reverse geocode error:', error.message);
+        return null;
     }
 }
 
@@ -147,17 +172,32 @@ app.post('/api/visitors', async (req, res) => {
 
         const { page, referrer, userAgent, deviceInfo, pageTitle, advancedTracking, latitude, longitude } = req.body;
 
-        // Get location data
-        const locationData = await getLocationFromIP(ip);
+        const hasGps = typeof latitude === 'number' && typeof longitude === 'number';
+
+        // Run IP lookup and (optionally) reverse geocode in parallel
+        const [locationData, geoCity] = await Promise.all([
+            getLocationFromIP(ip),
+            hasGps ? reverseGeocode(latitude, longitude) : Promise.resolve(null)
+        ]);
+
+        // If GPS coords were provided, reverse geocode gives the real city.
+        // Override the (often wrong) IP-based city/region/country with it.
+        const finalLocation = {
+            ...locationData,
+            ...(geoCity ? geoCity : {}),          // precise city from GPS wins
+            latitude: hasGps ? latitude : locationData.latitude,
+            longitude: hasGps ? longitude : locationData.longitude,
+        };
+
+        if (geoCity) {
+            console.log(`🛰️  GPS reverse geocode → ${geoCity.city}, ${geoCity.region}, ${geoCity.country}`);
+        }
 
         // Prepare visitor data
         const visitor = {
             id: Date.now().toString(),
             timestamp: new Date(),
-            ...locationData,
-            // Overwrite with high-accuracy GPS if provided
-            latitude: latitude || locationData.latitude,
-            longitude: longitude || locationData.longitude,
+            ...finalLocation,
 
             page: page || '/',
             pageTitle: pageTitle || 'Unknown',
